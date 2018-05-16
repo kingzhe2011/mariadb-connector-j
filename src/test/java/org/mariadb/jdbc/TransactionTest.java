@@ -73,14 +73,16 @@ public class TransactionTest extends BaseTest {
      */
     @Before
     public void before() throws SQLException {
-        Statement stmt = sharedConnection.createStatement();
-        stmt.execute("drop table if exists tx_fore_key");
-        stmt.execute("drop table if exists tx_prim_key");
-        createTable("tx_prim_key", "id int not null primary key", "engine=innodb");
-        createTable("tx_fore_key",
-                "id int not null primary key, id_ref int not null, "
-                        + "foreign key (id_ref) references tx_prim_key(id) on delete restrict on update restrict",
-                "engine=innodb");
+        if (testSingleHost) {
+            Statement stmt = sharedConnection.createStatement();
+            stmt.execute("drop table if exists tx_fore_key");
+            stmt.execute("drop table if exists tx_prim_key");
+            createTable("tx_prim_key", "id int not null primary key", "engine=innodb");
+            createTable("tx_fore_key",
+                    "id int not null primary key, id_ref int not null, "
+                            + "foreign key (id_ref) references tx_prim_key(id) on delete restrict on update restrict",
+                    "engine=innodb");
+        }
     }
 
     /**
@@ -91,9 +93,11 @@ public class TransactionTest extends BaseTest {
      */
     @After
     public void after() throws SQLException {
-        Statement stmt = sharedConnection.createStatement();
-        stmt.execute("drop table if exists tx_fore_key");
-        stmt.execute("drop table if exists tx_prim_key");
+        if (testSingleHost) {
+            Statement stmt = sharedConnection.createStatement();
+            stmt.execute("drop table if exists tx_fore_key");
+            stmt.execute("drop table if exists tx_prim_key");
+        }
     }
 
     @Test
