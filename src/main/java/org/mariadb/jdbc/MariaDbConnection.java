@@ -844,6 +844,14 @@ public class MariaDbConnection implements Connection {
         }
     }
 
+    public boolean isServerMariaDb() {
+        return protocol.isServerMariaDb();
+    }
+
+    public boolean versionGreaterOrEqual(int major, int minor, int patch) {
+        return protocol.versionGreaterOrEqual(major, minor, patch);
+    }
+
     /**
      * Retrieves this <code>Connection</code> object's current transaction isolation level.
      *
@@ -856,7 +864,9 @@ public class MariaDbConnection implements Connection {
      */
     public int getTransactionIsolation() throws SQLException {
         try (Statement stmt = createStatement()) {
-            try (ResultSet rs = stmt.executeQuery("SELECT @@tx_isolation")) {
+            String sql = "SELECT @@tx_isolation";
+            if (!protocol.isServerMariaDb() && protocol.versionGreaterOrEqual(8,0,3)) sql = "SELECT @@transaction_isolation";
+            try (ResultSet rs = stmt.executeQuery(sql)) {
                 if (rs.next()) {
                     final String response = rs.getString(1);
                     switch (response) {
@@ -873,6 +883,10 @@ public class MariaDbConnection implements Connection {
                             return Connection.TRANSACTION_SERIALIZABLE;
 
                         default:
+                            if (!protocol.isServerMariaDb() && protocol.versionGreaterOrEqual(8,0,3)) {
+                                throw ExceptionMapper.getSqlException("Could not get transaction isolation level: "
+                                        + "Invalid @@transaction_isolation value \"" + response + "\"");
+                            }
                             throw ExceptionMapper.getSqlException("Could not get transaction isolation level: "
                                     + "Invalid @@tx_isolation value \"" + response + "\"");
                     }
