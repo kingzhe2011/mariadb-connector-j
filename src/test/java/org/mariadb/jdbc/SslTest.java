@@ -925,6 +925,12 @@ public class SslTest extends BaseTest {
 
     private void createSslTestUser(String user) throws SQLException {
         Statement st = sharedConnection.createStatement();
+        try {
+            st.execute("DROP USER IF EXISTS '" + user + "'@'%'");
+        } catch (SQLException e) {
+            //eat
+        }
+        st.execute("FLUSH PRIVILEGES");
         st.execute("CREATE USER '" + user + "'@'%' identified by 'ssltestpassword' REQUIRE X509");
         st.execute("grant all privileges on *.* to '" + user + "'@'%'");
     }
