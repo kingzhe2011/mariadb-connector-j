@@ -126,8 +126,8 @@ public class PasswordEncodingTest extends BaseTest {
                 stmt.testExecute("GRANT ALL on *.* to 'test" + charsetName + "'@'%' identified by '" + exoticPwd + "'", Charset.forName(charsetName));
 
             } else {
-                stmt.execute("CREATE USER 'test" + charsetName + "'@'%' identified by '" + exoticPwd + "'");
-                stmt.testExecute("GRANT ALL on *.* to 'test" + charsetName + "'@'%'", Charset.forName(charsetName));
+                stmt.testExecute("CREATE USER 'test" + charsetName + "'@'%' identified by '" + exoticPwd + "'", Charset.forName(charsetName));
+                stmt.execute("GRANT ALL on *.* to 'test" + charsetName + "'@'%'");
 
             }
             stmt.execute("FLUSH PRIVILEGES");

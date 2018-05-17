@@ -941,7 +941,7 @@ public class SslTest extends BaseTest {
         Statement st = sharedConnection.createStatement();
 
         try {
-            st.execute("DROP USER IF EXISTS '" + user + "'@'%'");
+            st.execute("DROP USER '" + user + "'@'%'");
         } catch (SQLException e) {
             //eat
         }
