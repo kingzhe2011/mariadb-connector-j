@@ -132,8 +132,8 @@ public class SslTest extends BaseTest {
             stmt.execute("DROP USER 'ssltestUser'@'%'");
         } catch (SQLException e) {
         }
-        stmt.execute("CREATE USER 'ssltestUser'@'%'");
-        stmt.execute("GRANT ALL PRIVILEGES ON *.* TO 'ssltestUser'@'%' REQUIRE SSL");
+        stmt.execute("CREATE USER 'ssltestUser'@'%' REQUIRE SSL");
+        stmt.execute("GRANT ALL PRIVILEGES ON *.* TO 'ssltestUser'@'%'");
     }
 
     @Test
@@ -925,7 +925,8 @@ public class SslTest extends BaseTest {
 
     private void createSslTestUser(String user) throws SQLException {
         Statement st = sharedConnection.createStatement();
-        st.execute("grant all privileges on *.* to '" + user + "'@'%' identified by 'ssltestpassword' REQUIRE X509");
+        st.execute("CREATE USER '" + user + "'@'%' identified by 'ssltestpassword' REQUIRE X509");
+        st.execute("grant all privileges on *.* to '" + user + "'@'%'");
     }
 
     private void deleteSslTestUser(String user) throws SQLException {
